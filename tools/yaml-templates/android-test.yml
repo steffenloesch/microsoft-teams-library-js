@@ -6,6 +6,7 @@ parameters:
 steps:
 - checkout: self
 - checkout: ${{ parameters.androidAppHostingSdkGitPath }}
+  path: androidHost
   persistCredentials: true
 
 - task: NodeTool@0
@@ -35,14 +36,13 @@ steps:
 
 - bash: 'chmod u+x install_emulator.sh && ./install_emulator.sh'
   displayName: 'Install Emulator'
-  workingDirectory: '$(AndroidAppHostingSdkProjectDirectory)/devtools/ci'
+  workingDirectory: 'androidHost/devtools/ci'
 
-- task: Gradle@2
-  displayName: 'UI Auto Tests'
-  inputs:
-    workingDirectory: '$(AndroidAppHostingSdkProjectDirectory)/apps/orangeandroid'
-    gradleWrapperFile: '$(AndroidAppHostingSdkProjectDirectory)/apps/orangeandroid/gradlew'
-    gradleOptions: '-Xmx3072m'
-    publishJUnitResults: true
-    testResultsFiles: '**/TEST-*.xml'
-    tasks: 'connectedAndroidTest'
+- bash: 'chmod u+x ./gradlew && chmod u+x e2eTest.sh && ./e2eTest.sh'
+  displayName: 'Run Android E2E Tests'
+  workingDirectory: 'androidHost/apps/orangeandroid'
+
+- bash: 'cat ./android_log'
+  displayName: 'Post Android E2E Test Log'
+  workingDirectory: 'androidHost/apps/orangeandroid'
+  condition: succeededOrFailed()
