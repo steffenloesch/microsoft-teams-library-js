@@ -135,6 +135,15 @@ jobs:
           testResultsFiles: '**/e2e-tests-report*.xml'
         condition: succeededOrFailed()
 
+  - job: E2ETestAndroid
+    displayName: 'E2E Test - Android'
+    pool:
+      vmImage: 'macos-latest'
+    steps:
+      - template: tools/yaml-templates/android-test.yml
+        parameters:
+          androidAppHostingSdkGitPath: git://$(AndroidAppHostingSdkGitPath)
+
   - job: E2ETestCDN
     displayName: 'E2E Test - CDN'
     # This test only runs after deployment from a release branch and the new CDN version has been deployed
