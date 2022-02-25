@@ -42,7 +42,15 @@ steps:
   displayName: 'Run Android E2E Tests'
   workingDirectory: 'androidHost/apps/orangeandroid'
 
-- bash: 'cat ./android_log'
+- bash: 'cat ./cAT_log'
   displayName: 'Post Android E2E Test Log'
   workingDirectory: 'androidHost/apps/orangeandroid'
+  condition: succeededOrFailed()
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFiles: '**/TEST-*.xml'
+    failTaskOnFailedTests: false
+    testRunTitle: 'Test results'
   condition: succeededOrFailed()
